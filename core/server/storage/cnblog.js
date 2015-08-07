@@ -10,6 +10,8 @@ var _ = require("lodash"),
     cronJob = require("cron").CronJob,
     filePath = __dirname + "/cnblog.json";
 
+var errTime = 0;
+
 var cnblog = (function(){
     var json;
     return {
@@ -70,8 +72,11 @@ function updateCnblog (errorHandler){
 
 function errorHandler(){
     console.log(e);
-    console.log("Will refetch again!");
-    new cronJob("0 0 0 * * *",doJob,null,true,"Asia/Shanghai")
+    if(errTime < 3) {
+        console.log("Will refetch again!");
+        errTime++;
+        setTimeout(doJob, 10000);
+    }
 }
 
 function doJob(){
@@ -80,10 +85,11 @@ function doJob(){
 
 
 function cronUpdate(){
-    new cronJob("0 0 0 * * *",doJob,null,true,"Asia/Shanghai")
+    new cronJob("0 0 0 * * *",doJob,null,true,"Asia/Shanghai");
 }
 
 function init(){
+    doJob();
     cronUpdate();
 }
 
