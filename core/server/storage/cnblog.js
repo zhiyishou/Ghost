@@ -15,12 +15,11 @@ var cnblog = (function(){
     return {
         get:function(){
             if(!json){
+                updateCnblog(errorHandler);
                 return fs.readFileAsync(filePath,"utf8")
-                    .then(JSON.parse)
-                    .done();
-                //updateCnblog(errorHandler);
+                    .then(JSON.parse);
             }
-            return json;
+            return Promise.resolve(json);
         },
         set:function(j){
             json = j;
