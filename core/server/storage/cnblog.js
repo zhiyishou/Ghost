@@ -18,6 +18,7 @@ var cnblog = (function(){
         get:function(){
             if(!json){
                 updateCnblog(errorHandler);
+
                 return fs.readFileAsync(filePath,"utf8")
                     .then(JSON.parse);
             }
@@ -40,7 +41,7 @@ function updateCnblog (errorHandler){
         })
         .then(function(result){
             var tempPublished,
-                    tempObject,
+                tempObject,
                 newEntry = [];
 
             _.map(result.feed.entry,function(entry){
@@ -95,5 +96,3 @@ function init(){
 
 exports.getCnblog = cnblog.get;
 exports.init = init;
-
-console.log(cnblog.get());
