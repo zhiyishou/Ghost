@@ -2,6 +2,7 @@
  * Created by liang on 2015/8/6.
  */
 var _ = require("lodash"),
+    hbs = require("express-hbs"),
     moment = require("moment"),
     Promise = require("bluebird"),
     request = Promise.promisify(require("request")),
@@ -18,6 +19,7 @@ var cnblog = (function(){
         get:function(){
             if(!json){
                 updateCnblog(errorHandler);
+
                 return fs.readFileAsync(filePath,"utf8")
                     .then(JSON.parse);
             }
@@ -40,17 +42,17 @@ function updateCnblog (errorHandler){
         })
         .then(function(result){
             var tempPublished,
-                    tempObject,
+                tempObject,
                 newEntry = [];
 
             _.map(result.feed.entry,function(entry){
                 var object = {
                     title: entry.title[0]["_"].match(/.*(?=\s-)/)[0],
-                    url: entry.link[0]["$"].href
+                    url: hbs.handlebars.Utils.escapeExpression(entry.link[0]["$"].href)
                 };
 
                 tempObject = _.last(newEntry);
-                tempPublished = moment(new Date(entry.published)).format("MMMM YYYY");
+                tempPublished = moment(new Date(entry.published)).format("MMM YYYY");
                 if(tempObject && tempObject.published == tempPublished){
                     tempObject.entries.push(object);
                 }else{
@@ -72,9 +74,8 @@ function updateCnblog (errorHandler){
 
 function errorHandler(){
     console.log(e);
-    if(errTime < 3) {
+    if(errTime++ < 3) {
         console.log("Will refetch again!");
-        errTime++;
         setTimeout(doJob, 10000);
     }
 }
@@ -85,7 +86,10 @@ function doJob(){
 
 
 function cronUpdate(){
-    new cronJob("0 0 0 * * *",doJob,null,true,"Asia/Shanghai");
+    new cronJob("0 0 0 * * *",function(){
+        errTime = 0;
+        doJob();
+    },null,true,"Asia/Shanghai");
 }
 
 function init(){
@@ -95,5 +99,3 @@ function init(){
 
 exports.getCnblog = cnblog.get;
 exports.init = init;
-
-console.log(cnblog.get());
