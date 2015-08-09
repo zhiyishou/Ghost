@@ -14,6 +14,7 @@ var _           = require('lodash'),
     Promise     = require('bluebird'),
     template    = require('../helpers/template'),
     routeMatch  = require('path-match')(),
+    conblog     = require('../storage/cnblog'),
 
     frontendControllers,
     staticPostPermalink = routeMatch('/:slug/:edit?');
@@ -196,7 +197,10 @@ function renderChannel(channelOpts) {
                 setReqCtx(req, filter);
             }
 
-            filters.doFilter('prePostsRender', page.posts, res.locals).then(function then(posts) {
+            Promise.all([
+                filters.doFilter('prePostsRender', page.posts, res.locals),
+                cnblog.getCnblog()
+            ]).spread(function then(posts,cnblog) {
                 getActiveThemePaths().then(function then(paths) {
                     var view = 'index',
                         result,
@@ -219,7 +223,7 @@ function renderChannel(channelOpts) {
 
                         result = formatPageResponse(posts, page, extra);
                     } else {
-                        result = formatPageResponse(posts, page);
+                        result = formatPageResponse(posts, page, {cnblog: cnblog});
                     }
 
                     setResponseContext(req, res);

@@ -24,6 +24,7 @@ var express     = require('express'),
     sitemap     = require('./data/xml/sitemap'),
     xmlrpc      = require('./data/xml/xmlrpc'),
     GhostServer = require('./ghost-server'),
+    cnblog      = require('./storage/cnblog'),
 
     dbHash;
 
