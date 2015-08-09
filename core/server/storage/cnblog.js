@@ -48,7 +48,7 @@ function updateCnblog (errorHandler){
             _.map(result.feed.entry,function(entry){
                 var object = {
                     title: entry.title[0]["_"].match(/.*(?=\s-)/)[0],
-                    url: hbs.handlebars.Utils.escapeExpression(entry.link[0]["$"].href)
+                    href: entry.link[0]["$"].href
                 };
 
                 tempObject = _.last(newEntry);
