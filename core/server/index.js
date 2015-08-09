@@ -185,6 +185,8 @@ function init(options) {
             xmlrpc.init()
         );
     }).then(function () {
+        return cnblog.init();
+    }).then(function () {
         var adminHbs = hbs.create();
 
         // Initialize Internationalization
