@@ -14,7 +14,7 @@ var _           = require('lodash'),
     Promise     = require('bluebird'),
     template    = require('../helpers/template'),
     routeMatch  = require('path-match')(),
-    conblog     = require('../storage/cnblog'),
+    cnblog     = require('../storage/cnblog'),
 
     frontendControllers,
     staticPostPermalink = routeMatch('/:slug/:edit?');
